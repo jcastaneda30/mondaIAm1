@@ -1,0 +1,172 @@
+FUNCTION_BLOCK prop
+
+VAR_INPUT				
+        cantidadRopa : REAL; RANGE := (0 .. 20);
+        temperatura : REAL; RANGE := (5 .. 40);
+        suciedad : REAL; RANGE := (0 .. 100);
+END_VAR
+
+VAR_OUTPUT				
+        agua : REAL; RANGE := (0 .. 50);
+        detergente : REAL; RANGE := (0 .. 200);
+END_VAR
+
+FUZZIFY cantidadRopa
+        TERM muyBaja := trape 0 0 3 4;
+        TERM baja := trape 3 4 6 8;
+        TERM media := trape 6 8 10 12;
+        TERM alta := trape 10 12 20 20;
+END_FUZZIFY
+
+FUZZIFY temperatura
+        TERM muyFria := trape 5 5 10 15;
+        TERM fria := trian 10 15 25;
+        TERM ambiente := trian 15 25 30;
+        TERM caliente := trian 25 30 35;
+        TERM muyCaliente := trape 40 50 90 90;
+END_FUZZIFY
+
+FUZZIFY suciedad
+        TERM casiLimpio := trape 0 0 5 10;
+        TERM intermedio := trape 5 10 30 40;
+        TERM sucio := trape 30 40 60 70;
+        TERM muySucio := trape 60 70 100 100;
+END_FUZZIFY
+
+DEFUZZIFY agua
+        TERM muyBaja := trape 0 0 5 10;
+        TERM baja := trian 5 10 20;
+        TERM media := trian 10 20 30;
+        TERM alta := trian 20 30 35;
+        TERM muyAlta := trape 30 35 50 50;
+        METHOD : COG;	
+        DEFAULT := 0;
+END_DEFUZZIFY
+
+DEFUZZIFY detergente
+        TERM muyBajo := trape 0 0 15 30;
+        TERM bajo := trian 15 30 50;
+        TERM medio := trian 30 50 90;
+        TERM alto := trian 50 90 140;
+        TERM muyAlto := trape 130 140 200 200;
+        METHOD : COG;
+        DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+        AND : MIN;
+        ACT : MIN;
+        ACCU : MAX;
+
+        RULE 1 : IF (cantidadRopa IS muyBaja) AND (suciedad IS casiLimpio)
+                        THEN (agua IS muyBaja) AND (detergente IS muyBajo);
+
+        RULE 2 : IF (cantidadRopa IS muyBaja) AND (suciedad IS intermedio)
+                        THEN (agua IS baja) AND (detergente IS bajo);
+
+        RULE 3 : IF (cantidadRopa IS muyBaja) AND (suciedad IS sucio)
+                        THEN (agua IS baja) AND (detergente IS medio);
+
+        RULE 4 : IF (cantidadRopa IS muyBaja) AND (suciedad IS muySucio)
+                        THEN (agua IS media) AND (detergente IS medio);
+
+        RULE 5 : IF (cantidadRopa IS baja) AND (suciedad IS casiLimpio)
+                        THEN (agua IS baja) AND (detergente IS muyBajo);
+
+        RULE 6 : IF (cantidadRopa IS baja) AND (suciedad IS intermedio)
+                        THEN (agua IS media) AND (detergente IS bajo);
+
+        RULE 7 : IF (cantidadRopa IS baja) AND (suciedad IS sucio)
+                        THEN (agua IS media) AND (detergente IS medio);
+
+        RULE 8 : IF (cantidadRopa IS baja) AND (suciedad IS muySucio)
+                        THEN (agua IS media) AND (detergente IS alto);
+
+        RULE 9 : IF (cantidadRopa IS media) AND (suciedad IS casiLimpio)
+                        THEN (agua IS media) AND (detergente IS bajo);
+
+        RULE 10 : IF (cantidadRopa IS media) AND (suciedad IS intermedio)
+                        THEN (agua IS media) AND (detergente IS medio);
+
+        RULE 11 : IF (cantidadRopa IS media) AND (suciedad IS sucio)
+                        THEN (agua IS alta) AND (detergente IS alto);
+
+        RULE 12 : IF (cantidadRopa IS media) AND (suciedad IS muySucio)
+                        THEN (agua IS alta) AND (detergente IS muyAlto);
+
+        RULE 13 : IF (cantidadRopa IS alta) AND (suciedad IS casiLimpio)
+                        THEN (agua IS alta) AND (detergente IS medio);
+
+        RULE 14 : IF (cantidadRopa IS alta) AND (suciedad IS intermedio)
+                        THEN (agua IS alta) AND (detergente IS alto);
+
+        RULE 15 : IF (cantidadRopa IS alta) AND (suciedad IS sucio)
+                        THEN (agua IS muyAlta) AND (detergente IS alto);
+
+        RULE 16 : IF (cantidadRopa IS alta) AND (suciedad IS muySucio)
+                        THEN (agua IS muyAlta) AND (detergente IS muyAlto);
+
+        RULE 17 : IF (temperatura IS muyFria) AND (suciedad IS casiLimpio)
+                        THEN (detergente IS bajo);
+
+        RULE 18 : IF (temperatura IS muyFria) AND (suciedad IS intermedio)
+                        THEN (detergente IS medio);
+
+        RULE 19 : IF (temperatura IS muyFria) AND (suciedad IS sucio)
+                        THEN (detergente IS alto);
+
+        RULE 20 : IF (temperatura IS muyFria) AND (suciedad IS muySucio)
+                        THEN (detergente IS muyAlto);
+
+        RULE 21 : IF (temperatura IS fria) AND (suciedad IS casiLimpio)
+                        THEN (detergente IS muyBajo);
+
+        RULE 22 : IF (temperatura IS fria) AND (suciedad IS intermedio)
+                        THEN (detergente IS bajo);
+
+        RULE 23 : IF (temperatura IS fria) AND (suciedad IS sucio)
+                        THEN (detergente IS medio);
+
+        RULE 24 : IF (temperatura IS fria) AND (suciedad IS muySucio)
+                        THEN (detergente IS alto);
+
+        RULE 25 : IF (temperatura IS ambiente) AND (suciedad IS casiLimpio)
+                        THEN (detergente IS muyBajo);
+
+        RULE 26 : IF (temperatura IS ambiente) AND (suciedad IS intermedio)
+                        THEN (detergente IS bajo);
+
+        RULE 27 : IF (temperatura IS ambiente) AND (suciedad IS sucio)
+                        THEN (detergente IS medio);
+
+        RULE 28 : IF (temperatura IS ambiente) AND (suciedad IS muySucio)
+                        THEN (detergente IS alto);
+
+        RULE 29 : IF (temperatura IS caliente) AND (suciedad IS casiLimpio)
+                        THEN (detergente IS muyBajo);
+
+        RULE 30 : IF (temperatura IS caliente) AND (suciedad IS intermedio)
+                        THEN (detergente IS muyBajo);
+
+        RULE 31 : IF (temperatura IS caliente) AND (suciedad IS sucio)
+                        THEN (detergente IS bajo);
+
+        RULE 32 : IF (temperatura IS caliente) AND (suciedad IS muySucio)
+                        THEN (detergente IS medio);
+
+        RULE 33 : IF (temperatura IS muyCaliente) AND (suciedad IS casiLimpio)
+                        THEN (detergente IS muyBajo);
+
+        RULE 34 : IF (temperatura IS muyCaliente) AND (suciedad IS intermedio)
+                        THEN (detergente IS muyBajo);
+
+        RULE 35 : IF (temperatura IS muyCaliente) AND (suciedad IS sucio)
+                        THEN (detergente IS bajo);
+
+        RULE 36 : IF (temperatura IS muyCaliente) AND (suciedad IS muySucio)
+                        THEN (detergente IS medio);
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
