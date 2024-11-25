@@ -3,6 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package lavanderia;
+import vista.VistaLavanderia;
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
+import net.sourceforge.jFuzzyLogic.rule.Rule;
+import net.sourceforge.jFuzzyLogic.rule.Variable;
+
 
 /**
  *
@@ -19,7 +25,7 @@ public class Lavanderia {
         p.setVisible(true);
     }
 
-    public String calcular(double comida, int servicio) {
+    public String[] calcular(int ropa, int temperatura, int suciedad) {
 
         // Carga el archivo de lenguaje de control difuso 'FCL'
         String fileName = "src/lavanderia/FCL_lavanderia.fcl";
@@ -28,57 +34,93 @@ public class Lavanderia {
         // En caso de error
         if (fis == null) {
             System.err.println("No se puede cargar el archivo: '" + fileName + "'");
-            return "";
+            return new String[]{""};
         }
 
         // Establecer las entradas del sistema
-        fis.setVariable("servicio", servicio);
-        fis.setVariable("comida", comida);
+        fis.setVariable("ropa", ropa);
+        fis.setVariable("temperatura", temperatura);
+        fis.setVariable("suciedad", suciedad);
 
         // Inicia el funcionamiento del sistema
         fis.evaluate();
 
-        // Muestra los gráficos de las variables de entrada y salida
-        JFuzzyChart.get().chart(fis.getFunctionBlock("prop"));
-
-        /*
-        // Muestra el conjunto difuso sobre el que se calcula el COG
-        Variable tip = fis.getVariable("propina");
-        JFuzzyChart.get().chart(tip, tip.getDefuzzifier(), true);
-        */
-
         // Imprime el valor concreto de salida del sistema
-        double salida = fis.getVariable("propina").getLatestDefuzzifiedValue();
+        double salida = fis.getVariable("agua").getLatestDefuzzifiedValue();
+        double salida1 = fis.getVariable("detergente").getLatestDefuzzifiedValue();
 
         // Muestra cuanto peso tiene la variable de salida en cada CD de salida
-        double pertenenciaBaja = fis.getVariable("propina").getMembership("baja");
-        double pertenenciaPromedio = fis.getVariable("propina").getMembership("promedio");
-        double pertenenciaGenerosa = fis.getVariable("propina").getMembership("generosa");
+        double pertenenciaMuyBaja = fis.getVariable("agua").getMembership("muyBaja");
+        double pertenenciaBaja = fis.getVariable("agua").getMembership("baja");
+        double pertenenciaMedia = fis.getVariable("agua").getMembership("media");
+        double pertenenciaAlta = fis.getVariable("agua").getMembership("alta");
+        double pertenenciaMuyAlta = fis.getVariable("agua").getMembership("muyAlta");
 
-        String recomendacion = "";
+        String conjuntoMayor = "";
+        double gradoMayor = 0;
 
-        if (pertenenciaBaja >= pertenenciaPromedio &&
-                pertenenciaBaja >= pertenenciaGenerosa){
-
-            recomendacion = "baja";
-        } else if (pertenenciaPromedio >= pertenenciaBaja &&
-                pertenenciaPromedio >= pertenenciaGenerosa){
-            recomendacion = "promedio";
-        } else if (pertenenciaGenerosa >= pertenenciaBaja &&
-                pertenenciaGenerosa >= pertenenciaPromedio){
-            recomendacion = "generosa";
+        // Comparar los grados de pertenencia y determinar el conjunto con mayor pertenencia
+        if (pertenenciaMuyBaja >= pertenenciaBaja && pertenenciaMuyBaja >= pertenenciaMedia &&
+                pertenenciaMuyBaja >= pertenenciaAlta && pertenenciaMuyBaja >= pertenenciaMuyAlta) {
+            conjuntoMayor = "muyBaja";
+            gradoMayor = pertenenciaMuyBaja;
+        } else if (pertenenciaBaja >= pertenenciaMuyBaja && pertenenciaBaja >= pertenenciaMedia &&
+                pertenenciaBaja >= pertenenciaAlta && pertenenciaBaja >= pertenenciaMuyAlta) {
+            conjuntoMayor = "baja";
+            gradoMayor = pertenenciaBaja;
+        } else if (pertenenciaMedia >= pertenenciaMuyBaja && pertenenciaMedia >= pertenenciaBaja &&
+                pertenenciaMedia >= pertenenciaAlta && pertenenciaMedia >= pertenenciaMuyAlta) {
+            conjuntoMayor = "media";
+            gradoMayor = pertenenciaMedia;
+        } else if (pertenenciaAlta >= pertenenciaMuyBaja && pertenenciaAlta >= pertenenciaBaja &&
+                pertenenciaAlta >= pertenenciaMedia && pertenenciaAlta >= pertenenciaMuyAlta) {
+            conjuntoMayor = "alta";
+            gradoMayor = pertenenciaAlta;
+        } else {
+            conjuntoMayor = "muyAlta";
+            gradoMayor = pertenenciaMuyAlta;
         }
 
-        // Muestra las reglas activadas y el valor de salida de cada una despues de aplicar las operaciones lógicas
-        StringBuilder reglasUsadas = new StringBuilder();
-        reglasUsadas.append("Reglas Usadas:\n");
-        fis.getFunctionBlock("prop").getFuzzyRuleBlock("No1").getRules().stream().filter(r -> (r.getDegreeOfSupport() > 0)).forEachOrdered(r -> {
-            reglasUsadas.append(r.toString()).append("\n");
-        });
+        // Obtén los valores de pertenencia de cada término de la variable "detergente"
+        double pertenencia1MuyBaja = fis.getVariable("detergente").getMembership("muyBaja");
+        double pertenencia1Baja = fis.getVariable("detergente").getMembership("baja");
+        double pertenencia1Media = fis.getVariable("detergente").getMembership("media");
+        double pertenencia1Alta = fis.getVariable("detergente").getMembership("alta");
+        double pertenencia1MuyAlta = fis.getVariable("detergente").getMembership("muyAlta");
 
-        return ("Porcentaje de propina: " + String.format("%.1f", salida) + "%" +
-               "\n\n" + "Se recomienda dar una propina " + recomendacion +
-               "\n\n" + reglasUsadas.toString());
+        // Variables para almacenar el conjunto difuso con el mayor grado de pertenencia
+        String conjuntoMayorDetergente = "";
+        double gradoMayorDetergente = 0;
+
+        // Comparar los grados de pertenencia y determinar el conjunto con mayor pertenencia
+        if (pertenencia1MuyBaja >= pertenencia1Baja && pertenencia1MuyBaja >= pertenencia1Media &&
+                pertenencia1MuyBaja >= pertenencia1Alta && pertenencia1MuyBaja >= pertenencia1MuyAlta) {
+            conjuntoMayorDetergente = "muyBaja";
+            gradoMayorDetergente = pertenencia1MuyBaja;
+        } else if (pertenencia1Baja >= pertenencia1MuyBaja && pertenencia1Baja >= pertenencia1Media &&
+                pertenencia1Baja >= pertenencia1Alta && pertenencia1Baja >= pertenencia1MuyAlta) {
+            conjuntoMayorDetergente = "baja";
+            gradoMayorDetergente = pertenencia1Baja;
+        } else if (pertenencia1Media >= pertenencia1MuyBaja && pertenencia1Media >= pertenencia1Baja &&
+                pertenencia1Media >= pertenencia1Alta && pertenencia1Media >= pertenencia1MuyAlta) {
+            conjuntoMayorDetergente = "media";
+            gradoMayorDetergente = pertenencia1Media;
+        } else if (pertenencia1Alta >= pertenencia1MuyBaja && pertenencia1Alta >= pertenencia1Baja &&
+                pertenencia1Alta >= pertenencia1Media && pertenencia1Alta >= pertenencia1MuyAlta) {
+            conjuntoMayorDetergente = "alta";
+            gradoMayorDetergente = pertenencia1Alta;
+        } else {
+            conjuntoMayorDetergente = "muyAlta";
+            gradoMayorDetergente = pertenencia1MuyAlta;
+        }
+        String[] resultados = new String[2];
+
+        String resultado1=String.format("Se recomienda usar %.1f litros de agua:\nLa cual es: %s\nCon un grado de pertenencia de:%.2f", salida, conjuntoMayor, gradoMayor);
+        String resultado2=String.format("Se recomienda usar %.1f gramos de detergente:\nEl cual es: %s\nCon un grado de pertenencia de:%.2f", salida1, conjuntoMayorDetergente, gradoMayorDetergente);
+
+        resultados[0] = resultado1;
+        resultados[1] = resultado2;
+        return resultados;
     }
     
 }
