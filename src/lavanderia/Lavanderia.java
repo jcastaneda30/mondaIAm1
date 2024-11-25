@@ -21,8 +21,10 @@ public class Lavanderia {
      */
     public static void main(String[] args) {
 
-        VistaLavanderia p = new VistaLavanderia();
-        p.setVisible(true);
+        Lavanderia keta = new Lavanderia();
+        String[] asn = keta.calcular(11, 11, 11);
+        System.out.print(asn[0]);
+        System.out.print(asn[1]);
     }
 
     public String[] calcular(int ropa, int temperatura, int suciedad) {
@@ -38,7 +40,7 @@ public class Lavanderia {
         }
 
         // Establecer las entradas del sistema
-        fis.setVariable("ropa", ropa);
+        fis.setVariable("cantidadRopa", ropa);
         fis.setVariable("temperatura", temperatura);
         fis.setVariable("suciedad", suciedad);
 
@@ -82,11 +84,11 @@ public class Lavanderia {
         }
 
         // Obtén los valores de pertenencia de cada término de la variable "detergente"
-        double pertenencia1MuyBaja = fis.getVariable("detergente").getMembership("muyBaja");
-        double pertenencia1Baja = fis.getVariable("detergente").getMembership("baja");
-        double pertenencia1Media = fis.getVariable("detergente").getMembership("media");
-        double pertenencia1Alta = fis.getVariable("detergente").getMembership("alta");
-        double pertenencia1MuyAlta = fis.getVariable("detergente").getMembership("muyAlta");
+        double pertenencia1MuyBaja = fis.getVariable("detergente").getMembership("muyBajo");
+        double pertenencia1Baja = fis.getVariable("detergente").getMembership("bajo");
+        double pertenencia1Media = fis.getVariable("detergente").getMembership("medio");
+        double pertenencia1Alta = fis.getVariable("detergente").getMembership("alto");
+        double pertenencia1MuyAlta = fis.getVariable("detergente").getMembership("muyAlto");
 
         // Variables para almacenar el conjunto difuso con el mayor grado de pertenencia
         String conjuntoMayorDetergente = "";
@@ -113,10 +115,11 @@ public class Lavanderia {
             conjuntoMayorDetergente = "muyAlta";
             gradoMayorDetergente = pertenencia1MuyAlta;
         }
+        
         String[] resultados = new String[2];
 
-        String resultado1=String.format("Se recomienda usar %.1f litros de agua:\nLa cual es: %s\nCon un grado de pertenencia de:%.2f", salida, conjuntoMayor, gradoMayor);
-        String resultado2=String.format("Se recomienda usar %.1f gramos de detergente:\nEl cual es: %s\nCon un grado de pertenencia de:%.2f", salida1, conjuntoMayorDetergente, gradoMayorDetergente);
+        String resultado1=String.format("<html>Se recomienda usar %.1f litros de agua:\nLa cual es: %s\nCon un grado de pertenencia de:%.2f</html>", salida, conjuntoMayor, gradoMayor);
+        String resultado2=String.format("<html>Se recomienda usar %.1f gramos de detergente:\nEl cual es: %s\nCon un grado de pertenencia de:%.2f</html>", salida1, conjuntoMayorDetergente, gradoMayorDetergente);
 
         resultados[0] = resultado1;
         resultados[1] = resultado2;
