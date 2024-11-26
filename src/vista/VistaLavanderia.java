@@ -5,7 +5,7 @@ package vista;
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 import javax.swing.JOptionPane;
-import lavanderia.Lavanderia;
+import FIS_LavadoInteligente.FIS_LavadoInteligente;
 /**
  *
  * @author jaide
@@ -290,7 +290,7 @@ public class VistaLavanderia extends javax.swing.JFrame {
             return;  // Si algún valor es inválido, salimos de la función
         }
         
-        Lavanderia lavadora = new Lavanderia();
+        FIS_LavadoInteligente lavadora = new FIS_LavadoInteligente();
         String[] ans = lavadora.calcular(cantidadRopa, temp, sucieda);
         cantidadAgua.setText(ans[0]);
         cantidadDetergente.setText(ans[1]);

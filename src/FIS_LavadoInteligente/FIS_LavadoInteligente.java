@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package lavanderia;
+package FIS_LavadoInteligente;
 import vista.VistaLavanderia;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
@@ -14,23 +14,20 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
  *
  * @author jaide
  */
-public class Lavanderia {
+public class FIS_LavadoInteligente {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-        Lavanderia keta = new Lavanderia();
-        String[] asn = keta.calcular(11, 11, 11);
-        System.out.print(asn[0]);
-        System.out.print(asn[1]);
+        VistaLavanderia vista = new VistaLavanderia();
+        vista.setVisible(true);
     }
 
     public String[] calcular(int ropa, int temperatura, int suciedad) {
 
         // Carga el archivo de lenguaje de control difuso 'FCL'
-        String fileName = "src/lavanderia/FCL_lavanderia.fcl";
+        String fileName = "src/FIS_LavadoInteligente/FCL_lavanderia.fcl";
         FIS fis = FIS.load(fileName, true);
 
         // En caso de error
